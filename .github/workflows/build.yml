@@ -1,0 +1,35 @@
+name: Build Android APK
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Setup Expo
+      run: npm install -g expo-cli
+      
+    - name: Build APK
+      run: |
+        npm install -g eas-cli
+        eas build --platform android --local --output=./app-release.apk
+      
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: yt-music-player-apk
+        path: ./app-release.apk
